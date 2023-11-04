@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<GameObject> _Levels;
 
     [Header("UI")]
+    [SerializeField] private TMP_Text _levelNumberText;
     [SerializeField] private Button _resetButton;
     [SerializeField] private Button _buttonRestart;
     [SerializeField] private Button _buttonQuit;
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _totalLevels = _Levels.Count;
+        UpdateLevelNumber();
     }
 
     private void OnEnable()
@@ -84,6 +87,11 @@ public class GameManager : MonoBehaviour
                 Application.Quit();
             }
         }
+    }
+
+    private void UpdateLevelNumber()
+    {
+        _levelNumberText.text = (_currentLevel+1).ToString();
     }
 
     private IEnumerator PopUpCloseAppPanel()
@@ -217,12 +225,14 @@ public class GameManager : MonoBehaviour
 
         _currentLevel++;
 
+
+
         _NumberBlocks.Clear();
 
         if (_currentLevel != _totalLevels)
         {
             InitNumberBlocks();
-
+            UpdateLevelNumber();
             _Levels[_currentLevel].SetActive(true);
         } else
         {
