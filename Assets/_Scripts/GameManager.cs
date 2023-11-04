@@ -51,6 +51,14 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if (!PlayerPrefs.HasKey("CurrentLevel"))
+        {
+            PlayerPrefs.SetInt("CurrentLevel", 0);
+        } else
+        {
+            _currentLevel = PlayerPrefs.GetInt("CurrentLevel");
+        }
+
         _totalLevels = _Levels.Count;
         UpdateLevelNumber();
     }
@@ -91,7 +99,13 @@ public class GameManager : MonoBehaviour
 
     private void UpdateLevelNumber()
     {
+        if (PlayerPrefs.HasKey("CurrentLevel")) PlayerPrefs.SetInt("CurrentLevel", _currentLevel);  //save current level 
+
+        //Debug.Log("saved level "+ PlayerPrefs.GetInt("CurrentLevel"));
+
         _levelNumberText.text = (_currentLevel+1).ToString();
+
+        _Levels[_currentLevel].SetActive(true);
     }
 
     private IEnumerator PopUpCloseAppPanel()
@@ -182,6 +196,8 @@ public class GameManager : MonoBehaviour
 
     private void Restart()
     {
+        PlayerPrefs.SetInt("CurrentLevel", 0);
+
         levelsClearedOnce = true; 
 
         _Levels[_currentLevel-1].SetActive(false);
@@ -225,15 +241,12 @@ public class GameManager : MonoBehaviour
 
         _currentLevel++;
 
-
-
         _NumberBlocks.Clear();
 
         if (_currentLevel != _totalLevels)
         {
             InitNumberBlocks();
-            UpdateLevelNumber();
-            _Levels[_currentLevel].SetActive(true);
+            UpdateLevelNumber();          
         } else
         {
             Debug.Log("CONGRATULATIONS");

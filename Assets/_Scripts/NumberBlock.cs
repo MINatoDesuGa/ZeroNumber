@@ -29,7 +29,7 @@ public class NumberBlock : MonoBehaviour
     {
         if (!GameManager.isMovingBlock) return;
         
-        Debug.Log("collision");
+        //Debug.Log("collision");
         _collidedNumberBlock = collision.gameObject.GetComponent<NumberBlock>();
 
         if( _collidedNumberBlock.number != number)
