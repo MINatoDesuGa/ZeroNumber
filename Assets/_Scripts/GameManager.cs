@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
 
         _totalLevels = _Levels.Count;
         UpdateLevelNumber();
+        InitNumberBlocks();
     }
 
     private void OnEnable()
