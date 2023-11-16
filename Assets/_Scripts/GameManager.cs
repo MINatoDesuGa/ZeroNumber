@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
         else Destroy(instance);
 
         _camera = Camera.main;
+
+        //testing purpose
     }
 
     private void Start()
@@ -197,9 +199,9 @@ public class GameManager : MonoBehaviour
 
     private void Restart()
     {
-        PlayerPrefs.SetInt("CurrentLevel", 0);
+        levelsClearedOnce = true;
 
-        levelsClearedOnce = true; 
+        PlayerPrefs.SetInt("CurrentLevel", 0);
 
         _Levels[_currentLevel-1].SetActive(false);
 
@@ -208,6 +210,7 @@ public class GameManager : MonoBehaviour
         _GameOverPanel.SetActive(false);
 
         InitNumberBlocks();
+        UpdateLevelNumber();
 
         _Levels[_currentLevel].SetActive(true);
     }
