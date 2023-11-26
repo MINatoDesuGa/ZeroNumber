@@ -8,12 +8,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [SerializeField] private List<NumberBlock> _NumberBlocks;
+    public List<NumberBlock> _NumberBlocks;
     [SerializeField] private List<GameObject> _Levels;
+    [SerializeField] private List<LevelButton> _LevelButtons;
+
+    [Header("Panels")]
+    public GameObject LevelSelectionPanel;
+    public GameObject InLevelPanel;
 
     [Header("UI")]
     [SerializeField] private TMP_Text _levelNumberText;
     [SerializeField] private Button _resetButton;
+    [SerializeField] private Button _levelSelectionButton;
     [SerializeField] private Button _buttonRestart;
     [SerializeField] private Button _buttonQuit;
     [SerializeField] private GameObject _GameOverPanel;
@@ -25,9 +31,9 @@ public class GameManager : MonoBehaviour
 
     private NumberBlock _touchedBlock;
 
-    public static bool isMovingBlock = false, levelsClearedOnce = false;
+    public static bool isMovingBlock = false, levelsClearedOnce = false, isLevelSelected = false;
 
-    private int _currentLevel = 0, _totalLevels;
+    public int _currentLevel = 0, _totalLevels;
 
     //Touch
     private Touch _touch;
@@ -69,6 +75,7 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         _resetButton.onClick.AddListener(Reset);
+        _levelSelectionButton.onClick.AddListener(SwitchToLevelSelectionMenu);
         _buttonRestart.onClick.AddListener(Restart);
         _buttonQuit.onClick.AddListener(Quit);
     }
@@ -76,6 +83,7 @@ public class GameManager : MonoBehaviour
     private void OnDisable()
     {
         _resetButton.onClick.RemoveListener(Reset);
+        _levelSelectionButton.onClick.RemoveListener(SwitchToLevelSelectionMenu);
         _buttonRestart.onClick.RemoveListener(Restart);
         _buttonQuit.onClick.RemoveListener(Quit);
     }
@@ -100,15 +108,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UpdateLevelNumber()
+    public void UpdateLevelNumber()
     {
-        if (PlayerPrefs.HasKey("CurrentLevel")) PlayerPrefs.SetInt("CurrentLevel", _currentLevel);  //save current level 
-
-        //Debug.Log("saved level "+ PlayerPrefs.GetInt("CurrentLevel"));
+        if (!isLevelSelected) {
+            if (PlayerPrefs.HasKey("CurrentLevel")) PlayerPrefs.SetInt("CurrentLevel", _currentLevel);  //save current level 
+        }
 
         _levelNumberText.text = (_currentLevel+1).ToString();
 
         _Levels[_currentLevel].SetActive(true);
+        isLevelSelected = false;
     }
 
     private IEnumerator PopUpCloseAppPanel()
@@ -197,6 +206,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SwitchToLevelSelectionMenu()
+    {
+        Reset();
+        InLevelPanel.SetActive(false);
+        InitLevelSelectionMenu();
+        LevelSelectionPanel.SetActive(true);
+    }
+
     private void Restart()
     {
         levelsClearedOnce = true;
@@ -258,9 +275,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void InitNumberBlocks()
+    public void InitNumberBlocks()
     {
         var NextLevelNumberBlocks = _Levels[_currentLevel].GetComponentsInChildren<NumberBlock>(true);
+
+        print(levelsClearedOnce);
 
         foreach (var obj in NextLevelNumberBlocks)
         {
@@ -273,6 +292,30 @@ public class GameManager : MonoBehaviour
             }
 
             _NumberBlocks.Add(obj);
+        }
+    }
+
+    private void InitLevelSelectionMenu()
+    {
+        _Levels[_currentLevel].SetActive(false);
+
+        var __totalUnlockedLevels = PlayerPrefs.GetInt("CurrentLevel");
+
+        print(__totalUnlockedLevels);
+
+        for (int i = 0; i < _totalLevels; i++) {
+            if(i <= __totalUnlockedLevels)
+            {
+                _LevelButtons[i].Level_Button.interactable = true;
+                _LevelButtons[i].LevelButtonText.text = (i+1).ToString();
+                _LevelButtons[i].LevelButtonImage.color = Color.white;
+            }
+            else
+            {
+                _LevelButtons[i].Level_Button.interactable = false;
+                _LevelButtons[i].LevelButtonText.text = "";
+                _LevelButtons[i].LevelButtonImage.color = Color.grey;
+            }
         }
     }
 }
