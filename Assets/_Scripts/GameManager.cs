@@ -53,7 +53,9 @@ public class GameManager : MonoBehaviour
         else Destroy(instance);
 
         _camera = Camera.main;
+        _totalLevels = _Levels.Count;
 
+        for (int i = 0; i < _totalLevels; i++) GlobalVariables.LevelCleared.Add(false);
         //testing purpose
     }
 
@@ -66,10 +68,11 @@ public class GameManager : MonoBehaviour
         {
             _currentLevel = PlayerPrefs.GetInt("CurrentLevel");
         }
-
-        _totalLevels = _Levels.Count;
+        
         UpdateLevelNumber();
         InitNumberBlocks();
+
+
     }
 
     private void OnEnable()
@@ -259,6 +262,7 @@ public class GameManager : MonoBehaviour
     private void OnGameOver()
     {
         _Levels[_currentLevel].SetActive(false);
+        GlobalVariables.LevelCleared[_currentLevel] = true;
 
         _currentLevel++;
 
@@ -279,11 +283,11 @@ public class GameManager : MonoBehaviour
     {
         var NextLevelNumberBlocks = _Levels[_currentLevel].GetComponentsInChildren<NumberBlock>(true);
 
-        print(levelsClearedOnce);
+        //print(levelsClearedOnce);
 
         foreach (var obj in NextLevelNumberBlocks)
         {
-            if(levelsClearedOnce)
+            if (GlobalVariables.LevelCleared[_currentLevel])
             {
                 obj.transform.localPosition = obj.initialPosition;
                 obj.number = obj.defaultNumber;
