@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
 
         _camera = Camera.main;
         _totalLevels = _Levels.Count;
+        GlobalVariables.totalUnlockedLevels = PlayerPrefs.GetInt("CurrentLevel");
 
         for (int i = 0; i < _totalLevels; i++) GlobalVariables.LevelCleared.Add(false);
         //testing purpose
@@ -266,6 +267,8 @@ public class GameManager : MonoBehaviour
 
         _currentLevel++;
 
+        GlobalVariables.totalUnlockedLevels = Mathf.Max(GlobalVariables.totalUnlockedLevels, _currentLevel);
+
         _NumberBlocks.Clear();
 
         if (_currentLevel != _totalLevels)
@@ -303,12 +306,12 @@ public class GameManager : MonoBehaviour
     {
         _Levels[_currentLevel].SetActive(false);
 
-        var __totalUnlockedLevels = PlayerPrefs.GetInt("CurrentLevel");
+        //var __totalUnlockedLevels = PlayerPrefs.GetInt("CurrentLevel");
 
-        print(__totalUnlockedLevels);
+        //print(__totalUnlockedLevels);
 
         for (int i = 0; i < _totalLevels; i++) {
-            if(i <= __totalUnlockedLevels)
+            if(i <= GlobalVariables.totalUnlockedLevels)
             {
                 _LevelButtons[i].Level_Button.interactable = true;
                 _LevelButtons[i].LevelButtonText.text = (i+1).ToString();

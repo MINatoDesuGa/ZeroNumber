@@ -6,4 +6,5 @@ using UnityEngine;
 public class GlobalVariables
 {
     public static List<bool> LevelCleared = new List<bool>();
+    public static int totalUnlockedLevels = 1;
 }
